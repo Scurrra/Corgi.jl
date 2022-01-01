@@ -71,5 +71,5 @@ Fit and perform standardization by centering and scaling `data` with specified p
 """
 function fit_transform(data::AbstractArray; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true)
     scaler = StandardScaler(data, dims = dims, with_μ = with_μ, with_σ = with_σ)
-    (data .- scaler.μ) ./ scaler.σ
+    transform!(scaler, copy(data))
 end
