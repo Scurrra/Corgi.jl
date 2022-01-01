@@ -28,7 +28,7 @@ end
 """
    	fit!(scaler::StandardScaler, data::AbstractArray)
 
-Fit `data` using existing `scaler`.
+Fit `data` using existing `scaler` parameters.
 """
 function fit!(scaler::StandardScaler, data::AbstractArray)
     scaler = StandardScaler(data, dims = scaler.dims, with_μ = scaler.with_μ, with_σ = scaler.with_σ)
