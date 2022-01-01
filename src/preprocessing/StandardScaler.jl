@@ -17,11 +17,11 @@ mutable struct StandardScaler{T}
     σ::Union{T,Nothing}
 
     StandardScaler(; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true) = new{T}(with_μ, with_σ, dims, nothing, nothing)
-    function StandardScaler(data::AbstractArray; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true)
+    
+	function StandardScaler(data::AbstractArray; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true)
         μ = !with_μ ? 0.0 : mean(data, dims = dims)
         σ = !with_σ ? 1.0 : std(data, dims = dims)
-
-        new{typeof(μ)}(with_μ, with_σ, dims, μ, σ)
+	    new{typeof(μ)}(with_μ, with_σ, dims, μ, σ)
     end
 end
 
