@@ -51,14 +51,14 @@ transform(scaler::StandardScaler, data::AbstractArray) = transform!(scaler, copy
 """
    	inverse_transform!(scaler::StandardScaler, data::AbstractArray)
 
-Scale back the data to the original representation.
+Scale back the `data` to the original representation.
 """
 inverse_transform!(scaler::StandardScaler, data::AbstractArray) = @.(data = data * scaler.σ + scaler.μ)
 
 """
    	inverse_transform(scaler::StandardScaler, data::AbstractArray)
 
-Scale back the data to the original representation.
+Scale back the `data` to the original representation.
 """
 inverse_transform(scaler::StandardScaler, data::AbstractArray) = inverse_transform!(scaler, copy(data))
 
