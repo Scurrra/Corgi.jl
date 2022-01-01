@@ -70,6 +70,5 @@ Fit and perform standardization by centering and scaling `data` with specified p
 `dims` is the dimention of data to be scaled by. If `with_μ` is true, center the data before scaling. If `with_σ` is true, scale the data to unit variance(or equivalently, unit standard deviation). 
 """
 function fit_transform(data::AbstractArray; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true)
-    scaler = StandardScaler(data, dims = dims, with_μ = with_μ, with_σ = with_σ)
-    transform!(scaler, copy(data))
+    transform!(StandardScaler(data, dims = dims, with_μ = with_μ, with_σ = with_σ), copy(data))
 end
