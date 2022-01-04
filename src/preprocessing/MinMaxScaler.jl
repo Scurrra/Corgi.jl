@@ -6,7 +6,7 @@ Transform features by scaling each feature to a given range. Create a structure 
 
 `dims` is the dimention of data to be scaled by. `feature_range` is the desired range of transformed data.
 """
-mutable struct MinMaxScaler{T}
+struct MinMaxScaler{T}
     dims::Int
     feature_range::Tuple
 
@@ -60,7 +60,7 @@ Scale back the `data` to the original representation.
 inverse_transform(scaler::MinMaxScaler, data::AbstractArray) = inverse_transform!(scaler, copy(data))
 
 """
-   	fit!(data::AbstractArray)
+   	fit_transform(data::AbstractArray; dims::Int=1, feature_range::Tuple=(0.0, 1.0))
 
 Fit and scale features of `data` according to `feature_range`.
 
