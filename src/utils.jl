@@ -3,7 +3,7 @@
 
 Combinations with repetitions
 """
-function cwr(n::Int, k::Int)
+function cwr(n, k)
     combs = Vector[]
     buf = fill(1, k)
 
