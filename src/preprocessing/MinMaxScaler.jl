@@ -6,19 +6,19 @@ Transform features by scaling each feature to a given range. Create a structure 
 
 `dims` is the dimention of data to be scaled by. `feature_range` is the desired range of transformed data.
 """
-struct MinMaxScaler{T}
+struct MinMaxScaler
     dims::Int
-    feature_range::Tuple
+    feature_range::NTuple{2,Float64}
 
-    min::Union{T,Nothing}
-    max::Union{T,Nothing}
+    min
+    max
 
-    MinMaxScaler(; dims::Int = 1, feature_range::Tuple = (0.0, 1.0)) = new{T}(dims, feature_range, nothing, nothing)
+    MinMaxScaler(; dims::Int = 1, feature_range::NTuple{2,Float64} = (0.0, 1.0)) = new(dims, feature_range)
 
-    function MinMaxScaler(data::AbstractArray; dims::Int = 1, feature_range::Tuple = (0.0, 1.0))
-        min = minimum(data, dims = dims)
-        max = maximum(data, dims = dims)
-        new{typeof(min)}(dims, feature_range, min, max)
+    function MinMaxScaler(data::AbstractArray; dims::Int = 1, feature_range::NTuple{2,Float64} = (0.0, 1.0))
+        min = minimum(data .|> Float64, dims = dims)
+        max = maximum(data .|> Float64, dims = dims)
+        new(dims, feature_range, min, max)
     end
 end
 
@@ -66,6 +66,4 @@ Fit and scale features of `data` according to `feature_range`.
 
 `dims` is the dimention of data to be scaled by. 
 """
-function fit_transform(data::AbstractArray; dims::Int = 1, feature_range::Tuple = (0.0, 1.0))
-    transform!(MinMaxScaler(data, dims = dims, feature_range = feature_range), data)
-end
+fit_transform(data::AbstractArray; dims::Int = 1, feature_range::NTuple{2,Float64} = (0.0, 1.0)) = transform!(MinMaxScaler(data, dims = dims, feature_range = feature_range), data)

@@ -8,20 +8,20 @@ Standardize features by removing the mean and scaling to unit variance. Create a
 
 `dims` is the dimention of data to be scaled by. If `with_μ` is true, center the data before scaling. If `with_σ` is true, scale the data to unit variance (or equivalently, unit standard deviation). 
 """
-mutable struct StandardScaler{T}
+mutable struct StandardScaler
     with_μ::Bool
     with_σ::Bool
     dims::Int
 
-    μ::Union{T,Nothing}
-    σ::Union{T,Nothing}
+    μ
+    σ
 
-    StandardScaler(; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true) = new{T}(with_μ, with_σ, dims, nothing, nothing)
+    StandardScaler(; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true) = new(with_μ, with_σ, dims)
     
 	function StandardScaler(data::AbstractArray; dims::Int = 1, with_μ::Bool = true, with_σ::Bool = true)
-        μ = !with_μ ? 0.0 : mean(data, dims = dims)
-        σ = !with_σ ? 1.0 : std(data, dims = dims)
-	    new{typeof(μ)}(with_μ, with_σ, dims, μ, σ)
+        μ = !with_μ ? 0.0 : mean(data .|> Float64, dims = dims)
+        σ = !with_σ ? 1.0 : std(data .|> Float64, dims = dims)
+	    new(with_μ, with_σ, dims, μ, σ)
     end
 end
 
