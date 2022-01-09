@@ -63,7 +63,7 @@ Scale back the `data` to the original representation.
 inverse_transform(scaler::StandardScaler, data::AbstractArray) = inverse_transform!(scaler, copy(data))
 
 """
-   	fit!(data::AbstractArray)
+   	fit_transform(data::AbstractArray)
 
 Fit and perform standardization by centering and scaling `data` with specified parameters.
 
