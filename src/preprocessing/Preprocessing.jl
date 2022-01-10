@@ -5,6 +5,7 @@ using Distributions
 using LinearAlgebra
 using Optim: optimize
 using Statistics
+using Zygote: gradient # to be removed
 
 export StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, PolynomialFeatures
 export fit!, transform!, transform, inverse_transform!, inverse_transform, fit_transform
