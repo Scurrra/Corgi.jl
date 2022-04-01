@@ -9,8 +9,8 @@ struct MinMaxScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
     features::Union{Colon, AbstractVector}
     
     function MinMaxScaler{T, OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {T, OUTRANGE}
-        min = minimum(data .|> Float64, dims=1)
-        max = maximum(data .|> Float64, dims=1)
+        min = minimum(data, dims=1) .|> Float64
+        max = maximum(data, dims=1) .|> Float64
         new{T, Float64.(OUTRANGE)}(min, max, features)
     end
 end
