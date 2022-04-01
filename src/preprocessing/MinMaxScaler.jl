@@ -6,12 +6,12 @@ Scaler that transforms `features` data of type `T` by scaling them to fit range 
 struct MinMaxScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
     min::Matrix{Float64}
     max::Matrix{Float64}
-    features::Union{Colon, AbstractVector}
+    features::Vector{Union{Int, Symbol, String}}
     
     function MinMaxScaler{T, OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {T, OUTRANGE}
         min = minimum(data, dims=1) .|> Float64
         max = maximum(data, dims=1) .|> Float64
-        new{T, Float64.(OUTRANGE)}(min, max, features)
+        new{T, Float64.(OUTRANGE)}(min, max, features == (:) ? collect(1:size(data, 2)) : collect(features))
     end
 end
 MinMaxScaler{T, OUTRANGE}(data::T; features=:) where {T<:AbstractDataFrame, OUTRANGE} = MinMaxScaler{T, OUTRANGE}(data[!, features] |> Matrix; features=features)
