@@ -1,12 +1,12 @@
 """
-    MinMaxScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
+    MaxAbsScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
 
 Scaler that transforms `features` data of type `T` by scaling them to fit range `OUTRANGE`
 """
 struct MinMaxScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
-    min::Matrix{Float64}
-    max::Matrix{Float64}
-    features::Union{Colon, AbstractVector}
+    min
+    max
+    features
     
     function MinMaxScaler{T, OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {T, OUTRANGE}
         min = minimum(data .|> Float64, dims=1)
@@ -17,7 +17,7 @@ end
 MinMaxScaler{T, OUTRANGE}(data::T; features=:) where {T<:AbstractDataFrame, OUTRANGE} = MinMaxScaler{T, OUTRANGE}(data[!, features] |> Matrix; features=features)
 
 """
-    MinMaxScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.))
+    MaxAbsScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.))
     
 Construct scaler that scales `features` from `data` of type `T` to fit `outrange`
 """
@@ -25,7 +25,7 @@ MinMaxScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.)) where
 MinMaxScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.)) where {T<:AbstractMatrix{<:Real}} = MinMaxScaler{T, outrange}(data[:, features]; features=features)
 
 """
-    MinMaxScaler(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.))
+    MaxAbsScaler(data::T; features=:, outrange::NTuple{2, <:Real}=(0., 1.))
     
 Construct scaler that scales `features` from `data` of type `T` to fit `outrange`
 """
