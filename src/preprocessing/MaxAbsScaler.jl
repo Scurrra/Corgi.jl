@@ -5,11 +5,11 @@ Scaler that transforms `features` data of type `T` by scaling them to fit range 
 """
 struct MaxAbsScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
     max::Matrix{Float64}
-    features::Union{Colon, AbstractVector}
+    features::Vector{Union{Int, Symbol, String}}
     
     function MaxAbsScaler{T, OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {T, OUTRANGE}
         max = maximum(abs, data, dims=1) .|> Float64
-        new{T, Float64.(OUTRANGE)}(max, features)
+        new{T, Float64.(OUTRANGE)}(max, features == (:) ? collect(1:size(data, 2)) : collect(features))
     end
 end
 MaxAbsScaler{T, OUTRANGE}(data::T; features=:) where {T<:AbstractDataFrame, OUTRANGE} = MaxAbsScaler{T, OUTRANGE}(data[!, features] |> Matrix; features=features)
