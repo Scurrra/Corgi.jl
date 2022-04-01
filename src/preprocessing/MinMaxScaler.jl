@@ -63,8 +63,8 @@ inverse_transform(scaler::MinMaxScaler{T, OUTRANGE}, data::T) where {T, OUTRANGE
 
 
 """
-   	fit_transform(data::T; features, outrange::NTuple{2,Float64}=(0.0, 1.0))
+   	fit_transform(data::T; features, outrange::NTuple{2,Float64}=(0., 1.))
 
 Fit and scale `features` of `data` of type `T` according to `outrange`.
 """
-fit_transform(data::T; features=:, outrange::NTuple{2,Float64}=(0.0, 1.0)) where {T, OUTRANGE} = transform!(MinMaxScaler{T, outrange}(data; features=features), data)
+fit_transform(data::T; features=:, outrange::NTuple{2,Float64}=(0., 1.)) where {T, OUTRANGE} = transform!(MinMaxScaler{T, outrange}(data; features=features), data)
