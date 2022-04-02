@@ -1,7 +1,6 @@
 using DataFrames
 
 """
-    OneHotEncoder(; features::Vector{Union{String,Symbol}} = [], classes::Dict{Union{String,Symbol},Union{String,Symbol}})
     OneHotEncoder(data::AbstractDataFrame; features::Vector{Union{String,Symbol}} = [], classes::Dict{Union{String,Symbol},Union{String,Symbol}})
 
 Encode categorical features as a one-hot numeric array.
@@ -14,8 +13,6 @@ struct OneHotEncoder
     features::Vector{String}
     classes::Dict{String,Any}
 
-    OneHotEncoder(; features::Vector{String}, classes::Dict{String,Any}) = new(features, classes)
-
     function OneHotEncoder(data::AbstractDataFrame; features::Vector{String} = String[], classes::Dict{String,Any} = Dict{String,Any}())
         features = length(features) == 0 ? names(data) : features
     
@@ -26,15 +23,6 @@ struct OneHotEncoder
     
         new(features, classes)
     end
-end
-
-"""
-   	fit!(scaler::OneHotEncoder, data::AbstractArray)
-
-Fit `data`.
-"""
-function fit!(scaler::OneHotEncoder, data::AbstractDataFrame)
-    scaler = OneHotEncoder(data)
 end
 
 """

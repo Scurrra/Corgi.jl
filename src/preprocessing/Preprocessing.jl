@@ -16,7 +16,7 @@ include("MinMaxScaler.jl")
 include("MaxAbsScaler.jl")
 # include("PowerTransformer.jl")
 include("StandardScaler.jl")
-# include("OneHotEncoder.jl")
+include("OneHotEncoder.jl")
 # include("PolynomialFeatures.jl")
 
 end
