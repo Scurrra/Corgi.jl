@@ -15,7 +15,7 @@ export fit!, transform!, transform, inverse_transform!, inverse_transform
 include("MinMaxScaler.jl")
 include("MaxAbsScaler.jl")
 # include("PowerTransformer.jl")
-# include("StandardScaler.jl")
+include("StandardScaler.jl")
 # include("OneHotEncoder.jl")
 # include("PolynomialFeatures.jl")
 
