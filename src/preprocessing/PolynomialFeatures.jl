@@ -10,7 +10,7 @@ struct PolynomialFeatures
     interaction::Bool
     bias::Bool
 
-    PolynomialFeatures(; degree::NTuple{2,Int} = (1, 1), interaction::Bool = true, bias::Bool = true) = new(degree, interaction, bias)
+    PolynomialFeatures(; degree::NTuple{2,Int}=(1, 1), interaction::Bool=true, bias::Bool=true) = new(degree, interaction, bias)
 end
 
 """
