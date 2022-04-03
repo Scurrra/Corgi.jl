@@ -18,7 +18,7 @@ end
 
 Transform `data` to polynomial features, where `data` is of type AbstractMatrix.
 """
-function transform(scaler::PolynomialFeatures, data::AbstractMatrix)
+function transform(scaler::PolynomialFeatures, data::Matrix{Float64})::Matrix{Float64}
     n = size(data, 2)
 
     if scaler.degree[2] >= 1
@@ -30,13 +30,13 @@ function transform(scaler::PolynomialFeatures, data::AbstractMatrix)
             for degree = max(scaler.degree[1], 2):scaler.degree[2]
                 coefs = cwr(n, degree)
                 for coef in coefs
-                    data = [data prod(data[:, coef], dims = 2)]
+                    data = [data prod(data[:, coef], dims=2)]
                 end
             end
         end
     end
 
-    data = scaler.bias ? [fill(1.0, size(data, 1)) data] : data
+    data = scaler.bias ? [ones(Float64, size(data, 1)) data] : data
 
     return data
 end

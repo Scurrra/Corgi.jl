@@ -11,28 +11,28 @@ NOTE: For now every feature for encoding must be specified. If it's not every co
 """
 struct OneHotEncoder
     features::Vector{String}
-    classes::Dict{String,Any}
+    classes::Dict{String, Vector{Union{Int, String, Symbol}}}
 
-    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String} = String[], classes::Dict{String,Any} = Dict{String,Any}())
-        features = length(features) == 0 ? names(data) : features
+    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String, Union{Int, String, Symbol}} = Dict{String, Union{Int, String, Symbol}}())
+        features = length(features) == 0 ? names(data) : string.(features)
     
         classes = length(classes) == 0 ? Dict(
             feature => unique(data[!, feature])
             for feature in features
-        ) : data
+        ) : classes
     
         new(features, classes)
     end
 end
 
 """
-   	transform!(scaler::OneHotEncoder, data::AbstractDataFrame)
+   	transform!(encoder::OneHotEncoder, data::AbstractDataFrame)
 
-Transform `data` with OneHotEncoder `scaler`.
+Transform `data` with OneHotEncoder `encoder`.
 """
-function transform!(scaler::OneHotEncoder, data::AbstractDataFrame)
-    for feature in scaler.features
-        for class in scaler.classes[feature]
+function transform!(encoder::OneHotEncoder, data::AbstractDataFrame)
+    for feature in encoder.features
+        for class in encoder.classes[feature]
             data[!, Symbol(
                 replace(string(feature) * "[" * class * "]", " " => "_")
             )] = Int8.(data[!, feature] .== class)
@@ -44,8 +44,8 @@ function transform!(scaler::OneHotEncoder, data::AbstractDataFrame)
 end
 
 """
-   	transform(scaler::OneHotEncoder, data::AbstractDataFrame)
+   	transform(encoder::OneHotEncoder, data::AbstractDataFrame)
 
-Transform `data` with OneHotEncoder `scaler`.
+Transform `data` with OneHotEncoder `encoder`.
 """
-transform(scaler::OneHotEncoder, data::AbstractDataFrame) = transform!(scaler, copy(data))
+transform(encoder::OneHotEncoder, data::AbstractDataFrame) = transform!(encoder, copy(data))

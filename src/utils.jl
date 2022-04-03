@@ -3,9 +3,9 @@
 
 Combinations with repetitions
 """
-function cwr(n, k)
-    combs = Vector[]
-    buf = fill(1, k)
+function cwr(n::Int, k::Int)
+    combs = Vector{Int}[]
+    buf = ones(Int, k)
 
     while true
         for i = k:-1:1
