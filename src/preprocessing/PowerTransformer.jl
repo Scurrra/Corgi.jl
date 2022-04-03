@@ -96,17 +96,17 @@ end
 
 
 """
-   	transform!(scaler::PowerTransformer, data::Vector{Float64})
+   	transform!(transformer::PowerTransformer, data::Vector{Float64})
 Apply the power transform to `data`.
 """
-transform!(scaler::PowerTransformer{:BC}, data::Vector{Float64}) = data = g(scaler.λ, data)
-transform!(scaler::PowerTransformer{:YJ}, data::Vector{Float64}) = data = h(scaler.λ, data)
+transform!(transformer::PowerTransformer{:BC}, data::Vector{Float64}) = data = g(transformer.λ, data)
+transform!(transformer::PowerTransformer{:YJ}, data::Vector{Float64}) = data = h(transformer.λ, data)
 
 """
-   	transform(scaler::PowerTransformer, data::Vector{Float64})
+   	transform(transformer::PowerTransformer, data::Vector{Float64})
 Apply the power transform to `data`.
 """
-transform(scaler::PowerTransformer{TYPE}, data::Vector{Float64}) where {TYPE} = transform!(scaler, copy(data))
+transform(transformer::PowerTransformer{TYPE}, data::Vector{Float64}) where {TYPE} = transform!(transformer, copy(data))
 
 function h_inv(λ::Float64, y::Number)
     # y >= 0
@@ -125,14 +125,14 @@ function h_inv(λ::Float64, y::Number)
 end
 
 """
-   	inverse_transform!(scaler::PowerTransformer, data::Vector{<:Real})
+   	inverse_transform!(transformer::PowerTransformer, data::Vector{<:Real})
 Apply the inverse power transform to `data`.
 """
-inverse_transform!(scaler::PowerTransformer{:BC}, data::Vector{Float64}) = @.(data = (scaler.λ == 0 ? exp(data) : (data * scaler.λ + 1) ^ (1 / scaler.λ)));
-inverse_transform!(scaler::PowerTransformer{:YJ}, data::Vector{Float64}) = @.(data = (x -> h_inv(scaler.λ, x))(data));                                                                     
+inverse_transform!(transformer::PowerTransformer{:BC}, data::Vector{Float64}) = @.(data = (transformer.λ == 0 ? exp(data) : (data * transformer.λ + 1) ^ (1 / transformer.λ)));
+inverse_transform!(transformer::PowerTransformer{:YJ}, data::Vector{Float64}) = @.(data = (x -> h_inv(transformer.λ, x))(data));                                                                     
 
 """
-   	inverse_transform(scaler::PowerTransformer, data::Vector{<:Real})
+   	inverse_transform(transformer::PowerTransformer, data::Vector{<:Real})
 Apply the inverse power transform to `data`.
 """
-inverse_transform(scaler::PowerTransformer{TYPE}, data::Vector{Float64}) where {TYPE} = inverse_transform!(scaler, copy(data))
+inverse_transform(transformer::PowerTransformer{TYPE}, data::Vector{Float64}) where {TYPE} = inverse_transform!(transformer, copy(data))
