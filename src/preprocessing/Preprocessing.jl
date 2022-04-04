@@ -7,7 +7,8 @@ using Optim: optimize
 using Statistics: mean, std
 using Zygote: gradient # to be removed
 
-abstract type AbstractTransformer{T<:Union{AbstractMatrix{<:Real}, AbstractDataFrame}, OUTRANGE} end
+abstract type AbstractTransformer end
+abstract type AbstractScaler{OUTRANGE} <: AbstractTransformer end
 
 export StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, PolynomialFeatures
 export fit!, transform!, transform, inverse_transform!, inverse_transform

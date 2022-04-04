@@ -1,59 +1,52 @@
 """
-    MaxAbsScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
+    MaxAbsScaler{OUTRANGE, FTYPE} <: AbstractScaler{OUTRANGE}
 
-Scaler that transforms `features` data of type `T` by scaling them to fit range `OUTRANGE`
+Scaler that transforms `features` data by scaling them to fit range `OUTRANGE`
 """
-struct MaxAbsScaler{T, OUTRANGE} <: AbstractTransformer{T, OUTRANGE}
+struct MaxAbsScaler{OUTRANGE, FTYPE<:Union{Colon, Vector{<:Union{Int, Symbol, String}}}} <: AbstractScaler{OUTRANGE}
     max::Matrix{Float64}
-    features::Vector{Union{Int, Symbol, String}}
+    features::FTYPE
     
-    function MaxAbsScaler{T, OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {T, OUTRANGE}
-        max = maximum(abs, data, dims=1) .|> Float64
-        new{T, Float64.(OUTRANGE)}(max, features == (:) ? collect(1:size(data, 2)) : collect(features))
+    function MaxAbsScaler{OUTRANGE}(data::AbstractMatrix{<:Real}; features=:) where {OUTRANGE}
+        max = maximum(Float64 ∘ abs, data; dims=1)
+        new{Float64.(OUTRANGE), typeof(features)}(max, features)
     end
 end
-MaxAbsScaler{T, OUTRANGE}(data::T; features=:) where {T<:AbstractDataFrame, OUTRANGE} = MaxAbsScaler{T, OUTRANGE}(data[!, features] |> Matrix; features=features)
-
-"""
-    MaxAbsScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(-1., 1.))
-    
-Construct scaler that scales `features` from `data` of type `T` to fit `outrange`
-"""
-MaxAbsScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(-1., 1.)) where {T<:AbstractDataFrame} = MaxAbsScaler{T, outrange}(data[!, features] |> Matrix; features=features)
-MaxAbsScaler{T}(data::T; features=:, outrange::NTuple{2, <:Real}=(-1., 1.)) where {T<:AbstractMatrix{<:Real}} = MaxAbsScaler{T, outrange}(data[:, features]; features=features)
+MaxAbsScaler{OUTRANGE}(data::AbstractDataFrame; features=:) where {OUTRANGE} = MaxAbsScaler{OUTRANGE}(data[!, features] |> Matrix; features=features)
 
 """
     MaxAbsScaler(data::T; features=:, outrange::NTuple{2, <:Real}=(-1., 1.))
     
-Construct scaler that scales `features` from `data` of type `T` to fit `outrange`
+Construct scaler that scales `features` from `data` to fit `outrange`
 """
-MaxAbsScaler(data::T; features=:, outrange::NTuple{2, <:Real}=(-1., 1.)) where {T} = MaxAbsScaler{T}(data; features=features, outrange=outrange)
+MaxAbsScaler(data::AbstractDataFrame; features=:, outrange::NTuple{2, <:Real}=(-1., 1.)) = MaxAbsScaler{outrange}(data[!, features] |> Matrix; features=features)
+MaxAbsScaler(data::AbstractMatrix{<:Real}; features=:, outrange::NTuple{2, <:Real}=(-1., 1.)) = MaxAbsScaler{outrange}(data[:, features]; features=features)
 
 
 """
-   	transform!(scaler::MaxAbsScaler{T, OUTRANGE}, data::T)
+   	transform!(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}})
 
-Scale features of `data` of type `T` according to `OUTRANGE`.
+Scale features of `data` according to `OUTRANGE`.
 """
-transform!(scaler::MaxAbsScaler{T, OUTRANGE}, data::T) where {T, OUTRANGE} = @.(data[:, scaler.features] = data[:, scaler.features] / scaler.max * (OUTRANGE[2] - OUTRANGE[1]) + OUTRANGE[1])
-
-"""
-   	transform(scaler::MaxAbsScaler{T, OUTRANGE}, data::T)
-
-Scale features of `data` of type `T` according to `OUTRANGE`.
-"""
-transform(scaler::MaxAbsScaler{T, OUTRANGE}, data::T) where {T, OUTRANGE} = transform!(scaler, copy(data))
+transform!(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}}) where {OUTRANGE, FTYPE} = @.(data[:, scaler.features] = data[:, scaler.features] / scaler.max * (OUTRANGE[2] - OUTRANGE[1]) + OUTRANGE[1])
 
 """
-   	inverse_transform!(scaler::MaxAbsScaler{T, OUTRANGE}, data::T)
+   	transform(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}})
 
-Scale back the `data` of type `T` to the original representation.
+Scale features of `data` according to `OUTRANGE`.
 """
-inverse_transform!(scaler::MaxAbsScaler{T, OUTRANGE}, data::T) where {T, OUTRANGE} = @.(data[:, scaler.features] = (data[:, scaler.features] - OUTRANGE[1]) / (OUTRANGE[2] - OUTRANGE[1]) * scaler.max)
+transform(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}}) where {OUTRANGE, FTYPE} = transform!(scaler, copy(data))
 
 """
-   	inverse_transform(scaler::MaxAbsScaler{T, OUTRANGE}, data::T)
+   	inverse_transform!(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}})
 
-Scale back the `data` of type `T` to the original representation.
+Scale back the `data` to the original representation.
 """
-inverse_transform(scaler::MaxAbsScaler{T, OUTRANGE}, data::T) where {T, OUTRANGE} = inverse_transform!(scaler, copy(data))
+inverse_transform!(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}}) where {OUTRANGE, FTYPE} = @.(data[:, scaler.features] = (data[:, scaler.features] - OUTRANGE[1]) / (OUTRANGE[2] - OUTRANGE[1]) * scaler.max)
+
+"""
+   	inverse_transform(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}})
+
+Scale back the `data` to the original representation.
+"""
+inverse_transform(scaler::MaxAbsScaler{OUTRANGE, FTYPE}, data::Union{AbstractDataFrame, AbstractMatrix{<:Real}}) where {OUTRANGE, FTYPE} = inverse_transform!(scaler, copy(data))

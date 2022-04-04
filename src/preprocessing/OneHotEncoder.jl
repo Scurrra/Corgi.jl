@@ -9,15 +9,15 @@ Encode categorical features as a one-hot numeric array.
 
 NOTE: For now every feature for encoding must be specified. If it's not every column in `data` will be in `features`.
 """
-struct OneHotEncoder
+struct OneHotEncoder <: AbstractTransformer
     features::Vector{String}
-    classes::Dict{String, Vector{Union{Int, String, Symbol}}}
+    classes::Dict{String, Vector{String}}
 
-    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String, Union{Int, String, Symbol}} = Dict{String, Union{Int, String, Symbol}}())
+    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String, String} = Dict{String, String}())
         features = length(features) == 0 ? names(data) : string.(features)
     
         classes = length(classes) == 0 ? Dict(
-            feature => unique(data[!, feature])
+            feature => string.(unique(data[!, feature]))
             for feature in features
         ) : classes
     
@@ -32,9 +32,10 @@ Transform `data` with OneHotEncoder `encoder`.
 """
 function transform!(encoder::OneHotEncoder, data::AbstractDataFrame)
     for feature in encoder.features
+        data[!, feature] = string.(data[!, feature])
         for class in encoder.classes[feature]
             data[!, Symbol(
-                replace(string(feature) * "[" * class * "]", " " => "_")
+                replace(feature * "[" * string(class) * "]", " " => "_")
             )] = Int8.(data[!, feature] .== class)
         end
         select!(data, Not(feature))

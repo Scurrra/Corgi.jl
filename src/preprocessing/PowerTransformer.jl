@@ -2,8 +2,6 @@ using Distributions
 using Optim: minimizer, optimize
 using Zygote: gradient # to be removed
 
-@enum PTType BC YJ
-
 Φ(x::Float64) = cdf(Normal(), x)
 p(n::Int) = (collect(1:n) .- 1 / 3) ./ (n + 1 / 3)
 ρ(x::Float64, c::Float64=0.5) = abs(x) > c ? 1 : 1 - (1 - (x / c)^2)^3
@@ -35,7 +33,7 @@ h̊(λ::Float64, y::Vector{Float64}) = (x -> h̊(λ, x, quantile(y, [1 // 4, 3 /
 PowerTransformer supports the Box-Cox transform and the Yeo-Johnson transform. The optimal parameter for stabilizing variance and minimizing skewness is estimated through maximum likelihood. 
 This implementation uses [this paper](https://arxiv.org/abs/2005.07946)
 """
-struct PowerTransformer{TYPE}
+struct PowerTransformer{TYPE} <: AbstractTransformer
     λ::Float64
 
     PowerTransformer{TYPE}(λ::Float64) where {TYPE} = new{TYPE}(λ)
