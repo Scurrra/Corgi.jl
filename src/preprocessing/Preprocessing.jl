@@ -5,7 +5,6 @@ using Distributions
 using LinearAlgebra
 using Optim: optimize
 using Statistics: mean, std
-using Zygote: gradient # to be removed
 
 abstract type AbstractTransformer end
 abstract type AbstractScaler{OUTRANGE} <: AbstractTransformer end

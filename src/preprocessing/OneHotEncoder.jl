@@ -11,16 +11,16 @@ NOTE: For now every feature for encoding must be specified. If it's not every co
 """
 struct OneHotEncoder <: AbstractTransformer
     features::Vector{String}
-    classes::Dict{String, Vector{String}}
+    classes::Dict{String,Vector{String}}
 
-    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String, String} = Dict{String, String}())
+    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String,String}=Dict{String,String}())
         features = length(features) == 0 ? names(data) : string.(features)
-    
+
         classes = length(classes) == 0 ? Dict(
             feature => string.(unique(data[!, feature]))
             for feature in features
         ) : classes
-    
+
         new(features, classes)
     end
 end

@@ -1,6 +1,5 @@
 using Distributions
 using Optim: minimizer, optimize
-using Zygote: gradient # to be removed
 
 Φ(x::Float64) = cdf(Normal(), x)
 p(n::Int) = (collect(1:n) .- 1 / 3) ./ (n + 1 / 3)
@@ -9,23 +8,25 @@ p(n::Int) = (collect(1:n) .- 1 / 3) ./ (n + 1 / 3)
 # Box-Cox
 g(λ::Float64, y::Float64) = λ == 0 ? log(y) : (y^λ - 1) / λ
 g(λ::Float64, y::Vector{Float64}) = (x -> g(λ, x)).(y)
-∂g(λ::Float64, y::Float64) = gradient(x -> g(λ, x), y)[1]
+∂g(λ::Float64, y::Float64) = λ == 0 ? 1 / y : y^(λ - 1)
 ∂g(λ::Float64, y::Vector{Float64}) = (x -> ∂g(λ, x)).(y)
 g̊(λ::Float64, y::Float64, C) = λ < 1 ?
-                            (y <= C[2] ? g(λ, y) : g(λ, C[2]) + (y - C[2]) * ∂g(λ, C[2])) :
-                            (y >= C[1] ? g(λ, y) : g(λ, C[1]) + (y - C[1]) * ∂g(λ, C[1]))
+                                (y <= C[2] ? g(λ, y) : g(λ, C[2]) + (y - C[2]) * ∂g(λ, C[2])) :
+                                (y >= C[1] ? g(λ, y) : g(λ, C[1]) + (y - C[1]) * ∂g(λ, C[1]))
 g̊(λ::Float64, y::Vector{Float64}) = (x -> g̊(λ, x, quantile(y, [1 // 4, 3 // 4]))).(y)
 
 # Yeo-Johnson
 h(λ::Float64, y::Float64) = y >= 0 ?
-                         (λ == 0 ? log(1 + y) : ((1 + y)^λ - 1) / λ) :
-                         (λ == 2 ? -log(1 - y) : -((1 - y)^(2 - λ) - 1) / (2 - λ))
+                            (λ == 0 ? log(1 + y) : ((1 + y)^λ - 1) / λ) :
+                            (λ == 2 ? -log(1 - y) : -((1 - y)^(2 - λ) - 1) / (2 - λ))
 h(λ::Float64, y::Vector{Float64}) = (x -> h(λ, x)).(y)
-∂h(λ::Float64, y::Float64) = gradient(x -> h(λ, x), y)[1]
+∂h(λ::Float64, y::Float64) = y >= 0 ?
+                             (λ == 0 ? 1 / (1 + y) : (1 + y)^(λ - 1)) :
+                             (λ == 2 ? 1 / (1 - y) : (1 - y)^(1 - λ))
 ∂h(λ::Float64, y::Vector{Float64}) = (x -> ∂h(λ, x)).(y)
 h̊(λ::Float64, y::Float64, C) = λ < 1 ?
-                            (y <= C[2] ? h(λ, y) : h(λ, C[2]) + (y - C[2]) * ∂h(λ, C[2])) :
-                            (y >= C[1] ? h(λ, y) : h(λ, C[1]) + (y - C[1]) * ∂h(λ, C[1]))
+                                (y <= C[2] ? h(λ, y) : h(λ, C[2]) + (y - C[2]) * ∂h(λ, C[2])) :
+                                (y >= C[1] ? h(λ, y) : h(λ, C[1]) + (y - C[1]) * ∂h(λ, C[1]))
 h̊(λ::Float64, y::Vector{Float64}) = (x -> h̊(λ, x, quantile(y, [1 // 4, 3 // 4]))).(y)
 
 """
@@ -50,7 +51,7 @@ function PowerTransformer{:BC}(data::Vector{Float64})
     # Step 2
     g_λ_0 = g(λ_0, data)
     w = Int.(abs.(g_λ_0 .- mean(g_λ_0)) .<= std(g_λ_0) / Φ(0.995))
-    f2(λ::Float64, w = w) =
+    f2(λ::Float64, w=w) =
         let g_λ = g(λ, data)
             μ = sum(w .* g_λ) / sum(w)
             σ = sum(w .* (g_λ .- μ) .^ 2) / sum(w)
@@ -73,18 +74,18 @@ function PowerTransformer{:YJ}(data::Vector{Float64})
             -ρ.((h_y .- mean(h_y)) ./ std(h_y) .- Φ.(p(length(data))) .^ -1) |> sum
         end
     λ_0 = minimizer(optimize(f1, -5.0, 5.0))::Float64
-    
+
     # Step 2
     h_λ_0 = h(λ_0, data)
     w = Int.(abs.(h_λ_0 .- mean(h_λ_0)) .<= std(h_λ_0) / Φ(0.995))
-    f2(λ::Float64, w = w) =
+    f2(λ::Float64, w=w) =
         let h_λ = h(λ, data)
             μ = sum(w .* h_λ) / sum(w)
             σ = sum(w .* (h_λ .- μ) .^ 2) / sum(w)
             -sum(w .* ((λ - 1) .* sign.(data) .* log.(abs.(data) .+ 1) .- 1 / 2 * log(σ)))
         end
     λ_1 = minimizer(optimize(f2, -5.0, 5.0))::Float64
-    
+
     # Step 3
     h_λ_1 = h(λ_1, data)
     w = Int.(abs.(h_λ_1 .- mean(h_λ_1)) .<= std(h_λ_1) / Φ(0.995))
@@ -126,8 +127,8 @@ end
    	inverse_transform!(transformer::PowerTransformer, data::Vector{<:Real})
 Apply the inverse power transform to `data`.
 """
-inverse_transform!(transformer::PowerTransformer{:BC}, data::Vector{Float64}) = @.(data = (transformer.λ == 0 ? exp(data) : (data * transformer.λ + 1) ^ (1 / transformer.λ)));
-inverse_transform!(transformer::PowerTransformer{:YJ}, data::Vector{Float64}) = @.(data = (x -> h_inv(transformer.λ, x))(data));                                                                     
+inverse_transform!(transformer::PowerTransformer{:BC}, data::Vector{Float64}) = @.(data = (transformer.λ == 0 ? exp(data) : (data * transformer.λ + 1)^(1 / transformer.λ)));
+inverse_transform!(transformer::PowerTransformer{:YJ}, data::Vector{Float64}) = @.(data = (x -> h_inv(transformer.λ, x))(data));
 
 """
    	inverse_transform(transformer::PowerTransformer, data::Vector{<:Real})
