@@ -9,7 +9,7 @@ using Statistics: mean, std
 abstract type AbstractTransformer end
 abstract type AbstractScaler{OUTRANGE} <: AbstractTransformer end
 
-export StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, PolynomialFeatures
+export MaxAbsScaler, StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, PolynomialFeatures
 export fit!, transform!, transform, inverse_transform!, inverse_transform
 
 include("MinMaxScaler.jl")
