@@ -3,7 +3,7 @@ include("../utils.jl")
 """
     PolynomialFeatures(; degree::NTuple{2, Int}=(1,1), interaction::Bool=true, bias::Bool=true)
 
-Generate polynomial and interaction features. `degree` is a tuple of two elements? where the first one is the minimal degree and the second one is the maximum one. If `interaction` is true only interaction features are produced: features that are products of at most degree distinct input features. If `bias` is true, the bias column is added. 
+Generate polynomial and interaction features. `degree` is a tuple of two elements, where the first one is the minimal degree and the second one is the maximum one. If `interaction` is true only interaction features are produced: features that are products of at most degree distinct input features. If `bias` is true, the bias column is added. 
 """
 struct PolynomialFeatures <: AbstractTransformer
     degree::NTuple{2,Int}
