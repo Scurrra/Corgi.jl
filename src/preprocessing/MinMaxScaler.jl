@@ -1,9 +1,9 @@
 """
-    MinMaxScaler{OUTRANGE} <: AbstractScaler{OUTRANGE}
+    MinMaxScaler{OUTRANGE} <: AbstractScaler
 
 Scaler that transforms `features` data by scaling them to fit range `OUTRANGE`
 """
-struct MinMaxScaler{OUTRANGE,FTYPE<:Union{Colon,Vector{<:Union{Int,Symbol,String}}}} <: AbstractScaler{OUTRANGE}
+struct MinMaxScaler{OUTRANGE,FTYPE<:Union{Colon,Vector{<:Union{Int,Symbol,String}}}} <: AbstractScaler
     min::Matrix{Float64}
     max::Matrix{Float64}
     features::FTYPE

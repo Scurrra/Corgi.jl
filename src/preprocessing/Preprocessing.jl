@@ -7,7 +7,7 @@ using Optim: optimize
 using Statistics: mean, std
 
 abstract type AbstractTransformer end
-abstract type AbstractScaler{OUTRANGE} <: AbstractTransformer end
+abstract type AbstractScaler <: AbstractTransformer end
 
 export MaxAbsScaler, StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, PolynomialFeatures
 export fit!, transform!, transform, inverse_transform!, inverse_transform

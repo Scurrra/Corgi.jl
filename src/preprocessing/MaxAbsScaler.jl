@@ -1,9 +1,9 @@
 """
-    MaxAbsScaler{FTYPE} <: AbstractScaler{(-1.0, 1.0)}
+    MaxAbsScaler{FTYPE} <: AbstractScaler
 
 Scaler that transforms `features` data by scaling them to fit range [-1, 1]
 """
-struct MaxAbsScaler{FTYPE<:Union{Colon,Vector{<:Union{Int,Symbol,String}}}} <: AbstractScaler{(-1.0, 1.0)}
+struct MaxAbsScaler{FTYPE<:Union{Colon,Vector{<:Union{Int,Symbol,String}}}} <: AbstractScaler
     max::Matrix{Float64}
     features::FTYPE
 
