@@ -1,3 +1,3 @@
-using Test
+using Test, Documenter, Corgi
 
-@test 1 == 1
+doctest(Corgi; fix=true)
