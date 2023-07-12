@@ -1,7 +1,6 @@
-using DataFrames
-
 """
-    OneHotEncoder(data::AbstractDataFrame; features::Vector{Union{String,Symbol}} = [], classes::Dict{Union{String,Symbol},Union{String,Symbol}})
+    OneHotEncoder <: AbstractTransformer
+    OneHotEncoder(data::AbstractDataFrame; features::Vector{<:Union{String,Symbol}}, classes::Dict{<:Union{String,Symbol},Vector{<:Union{Symbol,String}}})
 
 Encode categorical features as a one-hot numeric array.
 
@@ -13,7 +12,7 @@ struct OneHotEncoder <: AbstractTransformer
     features::Vector{String}
     classes::Dict{String,Vector{String}}
 
-    function OneHotEncoder(data::AbstractDataFrame; features::Vector{String}=String[], classes::Dict{String,String}=Dict{String,String}())
+    function OneHotEncoder(data::AbstractDataFrame; features::Vector{<:Union{Symbol,String}}=String[], classes::Dict{String,Vector{<:Union{Symbol,String}}}=Dict{String,Vector{<:Union{Symbol,String}}}())
         features = length(features) == 0 ? names(data) : string.(features)
 
         classes = length(classes) == 0 ? Dict(
