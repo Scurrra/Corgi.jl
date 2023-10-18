@@ -9,4 +9,7 @@ using Statistics
 include("preprocessing/Preprocessing.jl")
 using .Preprocessing
 
+include("optimization/Optimization.jl")
+using .Optimization
+
 end # module
