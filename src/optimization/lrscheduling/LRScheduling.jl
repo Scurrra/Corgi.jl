@@ -1,7 +1,7 @@
 module LRScheduling
 
 """
-AbstractLRScheduler
+    AbstractLRScheduler
 
 Learning rate scheduler base type.
 """
