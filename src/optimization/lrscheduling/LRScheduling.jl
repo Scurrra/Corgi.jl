@@ -21,6 +21,7 @@ Continuous learning rate schedulers: LinearLR, ExponentialLR, MultiplicativeLR, 
 """
 abstract type ContinuousLRScheduler <: AbstractLRScheduler end
 
+export AbstractLRScheduler, DiscreteLRScheduler, ContinuousLRScheduler
 export StepLR, MultiStepLR, ConstantLR
 export LinearLR, ExponentialLR, MultiplicativeLR, LambdaLR, PolynomialLR
 
