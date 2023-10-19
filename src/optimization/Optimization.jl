@@ -1,6 +1,6 @@
 module Optimization
 
-include("lrscheduler/LRScheduler.jl")
-using .LRScheduler
+include("lrscheduling/LRScheduling.jl")
+using .LRScheduling
 
 end

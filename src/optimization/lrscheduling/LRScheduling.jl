@@ -1,4 +1,4 @@
-module LRScheduler
+module LRScheduling
 
 """
 AbstractLRScheduler
