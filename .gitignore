@@ -26,3 +26,6 @@ test/Manifest.toml
 
 # Papers
 *.pdf
+
+# Data
+*/data
