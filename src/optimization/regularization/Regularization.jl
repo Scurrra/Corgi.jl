@@ -8,6 +8,14 @@ Regularizing base type.
 abstract type AbstractRegularizer end
 
 """
+    NullRegularizer <: AbstractRegularizer
+
+Null regularizer.
+"""
+struct NullRegularizer <: AbstractRegularizer end
+(reg::NullRegularizer)(ω::AbstractArray) = (zeros(typeof(ω[1]), size(ω)), zeros(typeof(ω[1]), size(ω)))
+
+"""
     Regularizer{λ₁,λ₂} <: AbstractRegularizer
 
 Basic regularizer type, where `λ₁` is a coefficient for the Lasso regularization and `λ₂` is a coefficient for the Ridge regularization.
