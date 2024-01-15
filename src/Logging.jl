@@ -20,8 +20,10 @@ struct NullLogger <: AbstractLogger end
 
 Logger that logs only costs while optimization.
 """
-struct CostsLogger
+struct CostsLogger <: AbstractLogger
     costs::Vector{Float64}
+
+    CostsLogger() = new([])
 end
 
 """
