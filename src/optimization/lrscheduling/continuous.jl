@@ -6,7 +6,7 @@ Linear learning rate scheduler. Linearly changes the learning rate from `λ η` 
 mutable struct LinearLR <: ContinuousLRScheduler
     η::AbstractFloat
     λ::AbstractFloat
-    total_iters::Int8
+    total_iters::Int
 
     LinearLR(η::AbstractFloat; λ::AbstractFloat=0.1, total_iters::Int=1) = new(η, λ, total_iters)
 end
@@ -27,7 +27,7 @@ Exponential learning rate scheduler. Multiplies the learning rate `η` by `γ` u
 mutable struct ExponentialLR <: ContinuousLRScheduler
     η::AbstractFloat
     γ::AbstractFloat
-    total_iters::Int8
+    total_iters::Int
 
     ExponentialLR(η::AbstractFloat; γ::AbstractFloat=0.1, total_iters::Int=1) = new(η, λ, total_iters)
 end
@@ -48,7 +48,7 @@ Multiplicative learning rate scheduler. Multiplies the learning rate `η` by `λ
 mutable struct MultiplicativeLR <: ContinuousLRScheduler
     η::AbstractFloat
     λ::Function
-    total_iters::Int8
+    total_iters::Int
 
     MultiplicativeLR(η::AbstractFloat; λ::Function=(x)->x, total_iters::Int=1) = new(η, λ, total_iters)
 end
@@ -68,7 +68,7 @@ Lambda learning rate scheduler. Multiplies the initial learning rate `η` by `λ
 struct LambdaLR <: ContinuousLRScheduler
     η::AbstractFloat
     λ::Function
-    total_iters::Int8
+    total_iters::Int
 
     LambdaLR(η::AbstractFloat; λ::Function=(x)->x, total_iters::Int=1) = new(η, λ, total_iters)
 end
@@ -88,7 +88,7 @@ Polynomial learning rate scheduler. Decays the initial learning rate `η` using 
 struct PolynomialLR <: ContinuousLRScheduler
     η::AbstractFloat
     α::AbstractFloat
-    total_iters::Int8
+    total_iters::Int
 
     LambdaLR(η::AbstractFloat; α::AbstractFloat=1.0, total_iters::Int=1) = new(η, α, total_iters)
 end

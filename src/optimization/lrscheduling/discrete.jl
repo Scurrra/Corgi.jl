@@ -6,14 +6,14 @@ Step learning rate scheduler. Decays the learning rate `η` by `γ` each `step`.
 mutable struct StepLR <: DiscreteLRScheduler
     η::AbstractFloat
     γ::AbstractFloat
-    step::Int8
+    step::Int
 
     StepLR(η::AbstractFloat; γ::AbstractFloat=0.1, step::Int=1) = new(η, γ, step)
 end
 function (lrs::StepLR)(epoch::Int)
     if epoch % lrs.step == 0
         lrs.η *= lrs.γ
-    end
+    end 
 
     return lrs.η
 end
@@ -26,9 +26,9 @@ Multistep learning rate scheduler. Decays the learning rate `η` by `γ` on each
 mutable struct MultiStepLR <: DiscreteLRScheduler
     η::AbstractFloat
     γ::AbstractFloat
-    milestones::AbstractArray{Int8}
+    milestones::AbstractArray{Int}
 
-    MultiStepLR(η::AbstractFloat; γ::AbstractFloat=0.1, milestones::AbstractArray{Int8}=[]) = new(η, γ, unique(sort(milestones)))
+    MultiStepLR(η::AbstractFloat; γ::AbstractFloat=0.1, milestones::AbstractArray{Int}=[]) = new(η, γ, unique(sort(milestones)))
 end
 function (lrs::MultiStepLR)(epoch::Int)
     if epoch ∈ lrs.milestones
@@ -46,7 +46,7 @@ Constant learning rate scheduler. Decays the learning rate `η` by `γ` until th
 struct ConstantLR <: DiscreteLRScheduler
     η::AbstractFloat
     λ::AbstractFloat
-    total_iters::Int8
+    total_iters::Int
 
     ConstantLR(η::AbstractFloat; λ::AbstractFloat=0.1, total_iters::Int=1) = new(η, λ, total_iters)
 end
