@@ -14,11 +14,13 @@ include("Logging.jl")
 include("preprocessing/Preprocessing.jl")
 using .Preprocessing
 
-include("linear_models/LinearModels.jl")
-using .LinearModels
-
+abstract type AbstractLinearModel end
+export AbstractLinearModel
 
 include("optimization/Optimization.jl")
 using .Optimization
+
+include("linear_models/LinearModels.jl")
+using .LinearModels
 
 end # module
