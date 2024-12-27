@@ -15,4 +15,12 @@ include("regression/HuberRegressor.jl")
 
 export AbstractLinearRegression
 
+abstract type AbstractLinearClassification <: AbstractLinearModel end
+
+include("classification/LogisticRegression.jl")
+include("classification/SGDClassifier.jl")
+include("classification/RidgeClassifier.jl")
+
+export AbstractLinearClassification
+
 end
