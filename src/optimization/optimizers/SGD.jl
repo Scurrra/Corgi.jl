@@ -60,21 +60,21 @@ function (opt::SGD)(
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                model.ω .-= lr * (opt.∇J(model.ω, data[indx], target) .+ opt.regularizer(model.ω)[2] / length(indx))
+                model.ω .-= lr * (opt.∇J(model.ω, data[indx, :], target[indx]) .+ opt.regularizer(model.ω)[2] / length(indx))
             end
 
-            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(data))
+            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(target))
         end
     else
         ω = model.ω
-        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
         for epoch in 1:opt.epochs
             lr = opt.lrscheduler(epoch)
             for indx in Utils.split(indexes(), opt.batchsize)
-                ω .-= lr * (opt.∇J(ω, data[indx], target) .+ opt.regularizer(ω)[2] / length(indx))
+                ω .-= lr * (opt.∇J(ω, data[indx, :], target[indx]) .+ opt.regularizer(ω)[2] / length(indx))
             end
 
-            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
             if last_cost > current_cost
                 last_cost = current_cost
                 logger(current_cost)

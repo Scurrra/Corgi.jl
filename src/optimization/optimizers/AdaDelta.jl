@@ -71,32 +71,32 @@ function (opt::AdaDelta)(
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                g = opt.∇J(model.ω, data[indx], target) .+ opt.regularizer(model.ω)[2] / length(indx)
+                g = opt.∇J(model.ω, data[indx, :], target[indx]) .+ opt.regularizer(model.ω)[2] / length(indx)
                 Eg = opt.γ * Eg + (1 - opt.γ) * sum(x -> x^2, g)
                 Δ = sqrt(EΔ + ϵ) / sqrt(Eg + ϵ) * g
                 EΔ = opt.γ * EΔ + (1 - opt.γ) * sum(x -> x^2, Δ)
                 model.ω .-= lr * g
             end
 
-            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(data))
+            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(target))
         end
     else
         Eg = 0
         EΔ = 0
         ω = model.ω
-        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
         for epoch in 1:opt.epochs
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                g = opt.∇J(ω, data[indx], target) .+ opt.regularizer(ω)[2] / length(indx)
+                g = opt.∇J(ω, data[indx, :], target[indx]) .+ opt.regularizer(ω)[2] / length(indx)
                 Eg = opt.γ * Eg + (1 - opt.γ) * sum(x -> x^2, g)
                 Δ = sqrt(EΔ + ϵ) / sqrt(Eg + ϵ) * g
                 EΔ = opt.γ * EΔ + (1 - opt.γ) * sum(x -> x^2, Δ)
                 ω .-= lr * g
             end
 
-            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
             if last_cost > current_cost
                 last_cost = current_cost
                 logger(current_cost)

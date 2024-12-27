@@ -76,30 +76,30 @@ function (opt::AdaMax)(
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                g = opt.∇J(model.ω, data[indx], target) .+ opt.regularizer(model.ω)[2] / length(indx)
+                g = opt.∇J(model.ω, data[indx, :], target[indx]) .+ opt.regularizer(model.ω)[2] / length(indx)
                 m = opt.β₁ * m .+ (1 - opt.β₂) * g
                 v = max(opt.β₂ * v, sqrt(sum(x->x^2, g)) + ϵ)
                 model.ω .-= lr / (1 - opt.β₁^epoch) / v * m
             end
 
-            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(data))
+            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(target))
         end
     else
         m = zeros(length(model.ω))
         v = 0
         ω = model.ω
-        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
         for epoch in 1:opt.epochs
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                g = opt.∇J(ω, data[indx], target) .+ opt.regularizer(ω)[2] / length(indx)
+                g = opt.∇J(ω, data[indx, :], target[indx]) .+ opt.regularizer(ω)[2] / length(indx)
                 m = opt.β₁ * m .+ (1 - opt.β₂) * g
                 v = max(opt.β₂ * v, sqrt(sum(x->x^2, g)) + ϵ)
                 ω .-= lr / (1 - opt.β₁^epoch) / v * m
             end
 
-            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
             if last_cost > current_cost
                 last_cost = current_cost
                 logger(current_cost)

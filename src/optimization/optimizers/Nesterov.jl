@@ -68,26 +68,26 @@ function (opt::Nesterov)(
             lr = opt.lrscheduler(epoch)
 
             for indx in Utils.split(indexes(), opt.batchsize)
-                u = opt.γ * v .+ lr * (opt.∇J(model.ω .- opt.γ * v, data[indx], target) .+ opt.regularizer(model.ω .- opt.γ * v)[2] / length(indx))
+                u = opt.γ * v .+ lr * (opt.∇J(model.ω .- opt.γ * v, data[indx, :], target[indx]) .+ opt.regularizer(model.ω .- opt.γ * v)[2] / length(indx))
                 model.ω .-= u
                 v = u
             end
 
-            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(data))
+            logger(opt.J(model.ω, data, target) .+ opt.regularizer(model.ω)[1] / length(target))
         end
     else
         ω = model.ω
-        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+        last_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
         v = zeroes(length(ω))
         for epoch in 1:opt.epochs
             lr = opt.lrscheduler(epoch)
             for indx in Utils.split(indexes(), opt.batchsize)
-                u = opt.γ * v .+ lr * (opt.∇J(ω .- opt.γ * v, data[indx], target) .+ opt.regularizer(ω .- opt.γ * v)[2] / length(indx))
+                u = opt.γ * v .+ lr * (opt.∇J(ω .- opt.γ * v, data[indx, :], target[indx]) .+ opt.regularizer(ω .- opt.γ * v)[2] / length(indx))
                 ω .-= u
                 v = u
             end
 
-            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(data)
+            current_cost = opt.J(ω, data, target) .+ opt.regularizer(ω)[1] / length(target)
             if last_cost > current_cost
                 last_cost = current_cost
                 logger(current_cost)
