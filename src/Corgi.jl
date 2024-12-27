@@ -14,10 +14,9 @@ include("Logging.jl")
 include("preprocessing/Preprocessing.jl")
 using .Preprocessing
 
-### PLACEHOLDER FOR LINEAR MODELS
-abstract type AbstractLinearModel end
-export AbstractLinearModel
-###
+include("linear_models/LinearModels.jl")
+using .LinearModels
+
 
 include("optimization/Optimization.jl")
 using .Optimization
