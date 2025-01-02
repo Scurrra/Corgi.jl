@@ -52,7 +52,7 @@ import Base: split
 """
     split(data::AbstractVector, slen::Int)
 
-Splt data into batches.
+Split data into batches.
 
 !Warning: no checks.
 """
@@ -64,5 +64,30 @@ function split(data::AbstractVector, slen::Int)
 end
 export split
 
+"""
+    group(a::BitVector)
+
+Group bits in a bitvector.
+"""
+function group(a::BitVector)
+    groups = Pair{Bool,Int}[] 
+    
+    cur = a[i]
+    counter = 1
+    i=1
+    while i < length(a)
+        if a[i+1] == cur
+            counter += 1
+        else
+            push!(groups, cur => counter)
+            counter = 1
+            cur = a[i+1]
+        end
+        i += 1
+    end
+    push!(groups, cur => counter)
+    
+    return groups
+end
 
 end
